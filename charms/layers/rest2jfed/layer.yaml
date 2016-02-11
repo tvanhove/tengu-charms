@@ -1,1 +1,1 @@
-includes: ['apt', 'openjdk', 'interface:http']
+includes: ['layer:apt', 'layer:openjdk', 'interface:http']
