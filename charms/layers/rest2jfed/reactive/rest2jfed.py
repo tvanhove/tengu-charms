@@ -24,8 +24,8 @@ def upgrade_charm():
 @when('java.installed')
 @when_not('apt.installed.python-pip','rest2jfed.installed')
 def pre_install():
-	hookenv.log("Pre-install")
-	charms.apt.queue_install(['python-pip'])
+    hookenv.log("Pre-install")
+    charms.apt.queue_install(['python-pip'])
 	
 @when('java.installed','apt.installed.python-pip')
 @when_not('rest2jfed.installed')
@@ -35,7 +35,7 @@ def install():
         # update needed because of weird error
         hookenv.log("Installing dependencies")
         subprocess.check_output(['sudo', 'apt-get', 'update'])
-		subprocess.check_output(['pip2', 'install', 'Jinja2', 'Flask', 'pyyaml', 'click', 'python-dateutil'])
+        subprocess.check_output(['pip2', 'install', 'Jinja2', 'Flask', 'pyyaml', 'click', 'python-dateutil'])
     except subprocess.CalledProcessError as exception:
         hookenv.log(exception.output)
         exit(1)
@@ -54,7 +54,7 @@ def install():
         hookenv.log(exception.output)
         exit(1)
     open_port(5000)
-	set_state('rest2jfed.installed')
+    set_state('rest2jfed.installed')
 	
 @hook('config-changed')
 def config_changed():
@@ -78,23 +78,23 @@ def rest2jfed_relation_changed():
     relation_set(port=port)
 	
 def mergecopytree(src, dst, symlinks=False, ignore=None):
-""""Recursive copy src to dst, mergecopy directory if dst exists.
-OVERWRITES EXISTING FILES!!"""
-if not os.path.exists(dst):
-	os.makedirs(dst)
-	shutil.copystat(src, dst)
-lst = os.listdir(src)
-if ignore:
-	excl = ignore(src, lst)
-	lst = [x for x in lst if x not in excl]
-for item in lst:
-	src_item = os.path.join(src, item)
-	dst_item = os.path.join(dst, item)
-	if symlinks and os.path.islink(src_item):
-		if os.path.lexists(dst_item):
-			os.remove(dst_item)
-		os.symlink(os.readlink(src_item), dst_item)
-	elif os.path.isdir(src_item):
-		mergecopytree(src_item, dst_item, symlinks, ignore)
-	else:
-		shutil.copy2(src_item, dst_item)
+    """"Recursive copy src to dst, mergecopy directory if dst exists.
+    OVERWRITES EXISTING FILES!!"""
+    if not os.path.exists(dst):
+        os.makedirs(dst)
+        shutil.copystat(src, dst)
+    lst = os.listdir(src)
+    if ignore:
+        excl = ignore(src, lst)
+        lst = [x for x in lst if x not in excl]
+    for item in lst:
+        src_item = os.path.join(src, item)
+        dst_item = os.path.join(dst, item)
+        if symlinks and os.path.islink(src_item):
+            if os.path.lexists(dst_item):
+                os.remove(dst_item)
+            os.symlink(os.readlink(src_item), dst_item)
+        elif os.path.isdir(src_item):
+            mergecopytree(src_item, dst_item, symlinks, ignore)
+        else:
+            shutil.copy2(src_item, dst_item)
