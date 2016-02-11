@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # pylint: disable=c0111,c0103,c0301
 import subprocess
-import base64
 import os
+import shutil
+import base64
 
-from charmhelpers import fetch
-from charmhelpers.core import templating, hookenv, host
+from charmhelpers.core import hookenv
+from charmhelpers.core.hookenv import charm_dir, open_port, relation_set
 from charms.reactive import hook, when, when_not, set_state
 
 import charms.apt
@@ -20,13 +21,13 @@ def upgrade_charm():
         hookenv.log(exception.output)
         # we do not need to exit here
     install()
-	
+
 @when('java.installed')
 @when_not('apt.installed.python-pip','rest2jfed.installed')
 def pre_install():
-    hookenv.log("Pre-install")
+    hookenv.log("WOLOLO Pre-install")
     charms.apt.queue_install(['python-pip'])
-	
+
 @when('java.installed','apt.installed.python-pip')
 @when_not('rest2jfed.installed')
 def install():
@@ -55,7 +56,7 @@ def install():
         exit(1)
     open_port(5000)
     set_state('rest2jfed.installed')
-	
+
 @hook('config-changed')
 def config_changed():
     """Config changed"""
@@ -76,7 +77,7 @@ def rest2jfed_relation_changed():
     port = '5000'
     relation_set(host=host)
     relation_set(port=port)
-	
+
 def mergecopytree(src, dst, symlinks=False, ignore=None):
     """"Recursive copy src to dst, mergecopy directory if dst exists.
     OVERWRITES EXISTING FILES!!"""
